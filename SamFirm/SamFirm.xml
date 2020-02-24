@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SamFirm>
+  <SaveFileDialog>True</SaveFileDialog>
+  <AutoInfo>False</AutoInfo>
+  <Region></Region>
+  <Model></Model>
+  <PDAVer></PDAVer>
+  <CSCVer></CSCVer>
+  <PHONEVer></PHONEVer>
+  <BinaryNature>False</BinaryNature>
+  <CheckCRC>True</CheckCRC>
+  <AutoDecrypt>True</AutoDecrypt>
+</SamFirm>
