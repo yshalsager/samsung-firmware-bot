@@ -1,7 +1,6 @@
 """ SamFirm wrapper class """
 import re
 from datetime import datetime
-from os import popen
 
 from humanize import naturalsize
 
@@ -14,20 +13,16 @@ class SamFirm:
     def __init__(self):
         self.prefix = f"WINEDEBUG=fixme-all,err-all wine {PARENT_DIR}/SamFirm/SamFirm.exe"
 
-    def check_update(self, model: str, region: str, version: str = None) -> dict:
+    def check_update(self, model: str, region: str, version: str = None) -> str:
         """Check the latest available update"""
         command = f"{self.prefix} -c -model {model} -region {region}"
         if version:
             command += f" -version {version}"
-        output = popen(command).read()
-        update = self.parse_output(output)
-        return update
+        return command
 
     @staticmethod
     def parse_output(output: str) -> dict:
         """Parse SamFirm output"""
-        if re.search("Could not fetch info", output):
-            return {}
         model = re.search(r"(?:Model: )(.*)", output).group(1)
         version = re.search(r"(?:Version: )(.*)", output).group(1)
         android_version = re.search(r"(?:OS: )(.*)", output).group(1).replace('(', ' (')
