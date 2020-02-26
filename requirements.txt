@@ -1,0 +1,9 @@
+humanize
+# Dependecies for web scraping
+bs4
+# Telethon Dependecies
+Telethon==1.10.10
+cryptg
+pillow
+# aiohttp
+aiohttp[speedups]

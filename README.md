@@ -1,11 +1,9 @@
 # samsung-firmware-bot
 
 ## SamFirm Configuration
-- Install wine and winetricks
-- Run the following
+- Run the following scripts from SamFirm directory 
 ```shell script
-WINEARCH=win32 WINEPREFIX=~/.wine wine wineboot
-winetricks -q dotnet48
-winetricks -q vcrun2008
-winetricks -q vcrun2010
+sudo bash install_wine.sh
+sudo bash update_winetricks.sh
+sudo bash install_debs.sh
 ```
