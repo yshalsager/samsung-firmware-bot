@@ -1,5 +1,4 @@
 """ SamFirm Bot check updates module"""
-import re
 import subprocess
 
 from telethon import events
@@ -17,6 +16,9 @@ async def check(event):
         version = event.pattern_match.group(3).upper()
     except IndexError:
         version = None
+    if not await is_device(model) or not await is_region(region):
+        await event.reply("**Either model or region is incorrect!**")
+        return
     command = SAM_FIRM.check_update(model, region, version)
     bot_reply = await event.reply("__Checking...__")
     process = subprocess.Popen(command,
@@ -40,3 +42,13 @@ async def check(event):
                       f"**Size:** {update['size']}"
             await bot_reply.edit(message)
             return
+
+
+async def is_device(model):
+    """ check if the given model is a correct one"""
+    return bool(model in SAM_FIRM.models)
+
+
+async def is_region(region):
+    """ check if the given region is a correct one"""
+    return bool(region in SAM_FIRM.regions)

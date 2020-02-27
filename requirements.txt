@@ -1,3 +1,4 @@
+requests
 humanize
 # Dependecies for web scraping
 bs4

@@ -12,7 +12,7 @@ from samfirm_bot.utils.loader import load_modules
 BOT = TelegramClient('samfirm_bot', API_KEY, API_HASH).start(bot_token=BOT_TOKEN)
 BOT.parse_mode = 'markdown'
 BOT_INFO = {}
-SAM_FIRM = SamFirm()
+SAM_FIRM = SamFirm(BOT.loop)
 
 
 def main():
