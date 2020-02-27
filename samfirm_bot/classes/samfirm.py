@@ -87,7 +87,7 @@ class SamFirm:
         command = f"{self.prefix} -model {model} -region {region}"
         if version:
             command += f" -version {version}"
-        command += " -autodecrypt -folder download/"
+        command += f" -autodecrypt -folder {self.download_dir}"
         if path.exists(self.download_dir):
             rmtree(self.download_dir)
         mkdir(self.download_dir)

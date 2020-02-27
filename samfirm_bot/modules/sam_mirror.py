@@ -20,26 +20,24 @@ async def mirror(event):
     if not await is_device(model) or not await is_region(region):
         await event.reply("**Either model or region is incorrect!**")
         return
-    bot_reply = await event.reply("__Checking...__")
+    bot_reply = await event.reply("__Preparing...__")
     command = SAM_FIRM.download_update(model, region, version)
-    process = subprocess.Popen(command,
-                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    while True:
-        output = process.stdout.read()
-        if output == '' and process.poll() is not None:
-            break
-        if output and b"Could not fetch info" in output:
-            await bot_reply.edit("**Not Found!**")
-            return
-        if output and b"Version" in output:
-            await bot_reply.edit("**Firmware found, starting download**")
-        if output and b"Downloading" in output:
-            await bot_reply.edit("__Downloading...__")
-        if output and b"Decrypting" in output:
-            await bot_reply.edit("__Decrypting...__")
-        if output and b"Finished" in output:
-            await bot_reply.edit("__Download Finished!...__")
-            break
+    with subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=1,
+                          universal_newlines=True, shell=True) as p:
+        for line in p.stdout:
+            if line and "Could not" in line:
+                await bot_reply.edit("**Not Found!**")
+                return
+            if line and "Checking" in line:
+                await bot_reply.edit("__Checking...__")
+            if line and "Version" in line:
+                await bot_reply.edit("**Firmware found, starting download**")
+            if line and "Downloading" in line:
+                await bot_reply.edit("__Downloading...__")
+            if line and "Decrypting" in line:
+                await bot_reply.edit("__Decrypting...__")
+            if line and "Finished" in line:
+                await bot_reply.edit("__Download Finished!...__")
     await event.reply(f"**Downloaded {SAM_FIRM.get_downloaded()}**")
 
 
