@@ -5,6 +5,7 @@ from telethon import events
 
 from samfirm_bot import TG_LOGGER
 from samfirm_bot.samfirm_bot import BOT, SAM_FIRM
+from samfirm_bot.utils.checker import is_device, is_region
 
 
 @BOT.on(events.NewMessage(pattern=r'/samcheck(?: )(.*)(?: )([A-Z]{3})(?: )?(.*)?'))
@@ -42,13 +43,3 @@ async def check(event):
                       f"**Size:** {update['size']}"
             await bot_reply.edit(message)
             return
-
-
-async def is_device(model):
-    """ check if the given model is a correct one"""
-    return bool(model in SAM_FIRM.models)
-
-
-async def is_region(region):
-    """ check if the given region is a correct one"""
-    return bool(region in SAM_FIRM.regions)

@@ -3,6 +3,9 @@ import asyncio
 import json
 import re
 from datetime import datetime
+from glob import glob
+from os import path, mkdir
+from shutil import rmtree
 
 import aiohttp
 from humanize import naturalsize
@@ -20,6 +23,7 @@ class SamFirm:
         self.regions = self.load_regions()
         self.models = []
         self.loop.create_task(self.models_loop())
+        self.download_dir = f"{PARENT_DIR}/SamFirm/download/"
 
     @staticmethod
     def load_regions():
@@ -77,6 +81,24 @@ class SamFirm:
                 "date": date, "android": android_version,
                 "filename": filename, "size": size}
         return info
+
+    def download_update(self, model: str, region: str, version: str = None) -> str:
+        """Check the latest available update"""
+        command = f"{self.prefix} -model {model} -region {region}"
+        if version:
+            command += f" -version {version}"
+        command += " -autodecrypt -folder download/"
+        if path.exists(self.download_dir):
+            rmtree(self.download_dir)
+        mkdir(self.download_dir)
+        return command
+
+    def get_downloaded(self):
+        """Get downloaded file name"""
+        try:
+            return glob(f"{self.download_dir}/*.zip")[0]
+        except IndexError:
+            return None
 
     async def models_loop(self):
         """ fetch models info every 12 hours """
