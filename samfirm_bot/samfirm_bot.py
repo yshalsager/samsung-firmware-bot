@@ -6,7 +6,7 @@ from telethon.sync import TelegramClient
 
 from samfirm_bot import API_KEY, API_HASH, BOT_TOKEN, TG_LOGGER
 from samfirm_bot.modules import ALL_MODULES
-from samfirm_bot.samfirm import SamFirm
+from samfirm_bot.classes.samfirm import SamFirm
 from samfirm_bot.utils.loader import load_modules
 
 BOT = TelegramClient('samfirm_bot', API_KEY, API_HASH).start(bot_token=BOT_TOKEN)
