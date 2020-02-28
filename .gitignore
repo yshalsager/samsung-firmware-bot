@@ -5,4 +5,4 @@ config.*
 .idea/
 venv/
 *.session*
-SamFirm/download/
+SamFirm/downloads/

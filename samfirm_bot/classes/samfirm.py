@@ -104,7 +104,6 @@ class SamFirm:
 
     @staticmethod
     def extract_files(file):
-        print(file)
         with ZipFile(file, 'r') as zip_file:
             files = [n for n in zip_file.namelist() if 'AP' not in n]
             zip_file.extractall(path='/'.join(file.split('/')[:-1]), members=files)
