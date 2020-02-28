@@ -3,6 +3,7 @@ import re
 import signal
 import subprocess
 from os import setsid, killpg, getpgid
+from shutil import rmtree
 
 from telethon import events, Button
 
@@ -54,12 +55,14 @@ async def mirror(event):
     download = SAM_FIRM.get_downloaded(model, region)
     TG_LOGGER.info(f"Mirroring {download}")
     if download:
+        download_folder = '/'.join(download.split('/')[:-1])
         await bot_reply.edit(f"**Downloaded {download} Successfully!**")
         SAM_FIRM.extract_files(download)
         await bot_reply.edit(f"**Extracted files, upload is going to start!**")
         SF.sftp.makedirs(sf_path)
-        SF.sftp.put_r('/'.join(download.split('/')[:-1]), sf_path, preserve_mtime=True)
+        SF.sftp.put_r(download_folder, sf_path, preserve_mtime=True)
         await bot_reply.edit(f"**Uploaded Successfully!**")
         await event.reply(f"**Download from SourceForge**", buttons=[
             Button.url(version, f"{SF.url}/files/{model}/{region}/{version}")])
         TG_LOGGER.info(f"Mirrored {SF.url}/files/{model}/{region}/{version}")
+        rmtree(download_folder)
