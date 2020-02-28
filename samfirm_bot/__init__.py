@@ -15,6 +15,10 @@ API_HASH = CONFIG['api_hash']
 BOT_TOKEN = CONFIG['tg_bot_token']
 BOT_ID = CONFIG['tg_bot_id']
 TG_BOT_ADMINS = CONFIG['tg_bot_admins']
+SF_PROJECT = CONFIG['sf_project']
+SF_USER = CONFIG['sf_user']
+SF_PASS = CONFIG['sf_pass']
+SF_KEY = CONFIG['sf_key']
 
 # set logging
 FORMATTER = logging.Formatter('%(asctime)s [%(levelname)s] %(name)s'

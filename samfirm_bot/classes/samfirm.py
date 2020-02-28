@@ -4,8 +4,9 @@ import json
 import re
 from datetime import datetime
 from glob import glob
-from os import path, mkdir
+from os import path, makedirs
 from shutil import rmtree
+from zipfile import ZipFile
 
 import aiohttp
 from humanize import naturalsize
@@ -23,7 +24,7 @@ class SamFirm:
         self.regions = self.load_regions()
         self.models = []
         self.loop.create_task(self.models_loop())
-        self.download_dir = f"{PARENT_DIR}/SamFirm/download/"
+        self.download_dir = f"{PARENT_DIR}/SamFirm/downloads"
 
     @staticmethod
     def load_regions():
@@ -84,21 +85,30 @@ class SamFirm:
 
     def download_update(self, model: str, region: str, version: str = None) -> str:
         """Check the latest available update"""
+        download_path = f"{self.download_dir}/{model}/{region}/"
         command = f"{self.prefix} -model {model} -region {region}"
         if version:
             command += f" -version {version}"
-        command += f" -autodecrypt -folder {self.download_dir}"
-        if path.exists(self.download_dir):
-            rmtree(self.download_dir)
-        mkdir(self.download_dir)
+        command += f" -autodecrypt -folder {download_path}"
+        if path.exists(download_path):
+            rmtree(download_path)
+        makedirs(download_path)
         return command
 
-    def get_downloaded(self):
+    def get_downloaded(self, model: str, region: str):
         """Get downloaded file name"""
         try:
-            return glob(f"{self.download_dir}/*.zip")[0]
+            return glob(f"{self.download_dir}/{model}/{region}/*.zip")[0]
         except IndexError:
             return None
+
+    @staticmethod
+    def extract_files(file):
+        print(file)
+        with ZipFile(file, 'r') as zip_file:
+            files = [n for n in zip_file.namelist() if 'AP' not in n]
+            zip_file.extractall(path='/'.join(file.split('/')[:-1]), members=files)
+        return True
 
     async def models_loop(self):
         """ fetch models info every 12 hours """
