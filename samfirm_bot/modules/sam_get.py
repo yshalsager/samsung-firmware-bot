@@ -18,9 +18,9 @@ async def get(event):
         return
     sf_path = f"{SF.project}/{model}/{region}/"
     sf_folder = f"{SF.url}/files/{model}/{region}"
-    if SF.sftp.isdir(sf_path):
+    if await SF.sftp.isdir(sf_path):
         message = f"**Available firmware for {model} ({region}):**\n\n"
-        for item in SF.sftp.listdir(sf_path):
+        for item in await SF.sftp.listdir(sf_path):
             message += f"[{item}]({sf_folder}/{item})\n"
         await event.reply(message)
     else:
