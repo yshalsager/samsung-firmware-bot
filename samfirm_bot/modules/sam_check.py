@@ -27,7 +27,7 @@ async def check(event):
     output = await process.stdout.read()
     output = output.decode().strip()
     await process.wait()
-    if output and "Could not fetch info" in output:
+    if output and "Could not" in output:
         await bot_reply.edit("**Not Found!**")
         return
     if output and "Version" in output:
