@@ -12,7 +12,7 @@ from samfirm_bot.samfirm_bot import BOT, SAM_FIRM, SF
 from samfirm_bot.utils.checker import is_device, is_region
 
 
-@BOT.on(events.NewMessage(from_users=TG_BOT_ADMINS, pattern=r'/samup(?: )(.*)(?: )([A-Z]{3})(?: )?(.*)?'))
+@BOT.on(events.NewMessage(from_users=TG_BOT_ADMINS, pattern=r'/samup(?: )(.*)(?: )([a-zA-Z]{3})(?: )?(.*)?'))
 async def mirror(event):
     """ Mirror Samsung firmware """
     try:

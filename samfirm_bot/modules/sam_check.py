@@ -8,7 +8,7 @@ from samfirm_bot.samfirm_bot import BOT, SAM_FIRM
 from samfirm_bot.utils.checker import is_device, is_region
 
 
-@BOT.on(events.NewMessage(pattern=r'/samcheck(?: )(.*)(?: )([A-Z]{3})(?: )?(.*)?'))
+@BOT.on(events.NewMessage(pattern=r'/samcheck(?: )(.*)(?: )([a-zA-Z]{3})(?: )?(.*)?'))
 async def check(event):
     """Send a message when the command /samcheck is sent."""
     model = event.pattern_match.group(1).upper()

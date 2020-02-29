@@ -105,7 +105,8 @@ class SamFirm:
     @staticmethod
     def extract_files(file):
         with ZipFile(file, 'r') as zip_file:
-            files = [n for n in zip_file.namelist() if 'AP' not in n]
+            files = [n for n in zip_file.namelist() if n.startswith('BL_') or n.startswith('CP_')
+                     or n.startswith('CSC_') or n.startswith('HOME_CSC_') or n.endswith('.zip')]
             zip_file.extractall(path='/'.join(file.split('/')[:-1]), members=files)
         return True
 
