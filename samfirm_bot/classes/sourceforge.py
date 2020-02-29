@@ -27,6 +27,11 @@ class SourceForge:
             print("You must provide a SF key or a password!")
             exit(1)
 
+    async def upload(self, sf_path, download_folder):
+        """ Upload a directory to SourceForge"""
+        self.sftp.makedirs(sf_path)
+        self.sftp.put_r(download_folder, sf_path, preserve_mtime=True)
+
     def __del__(self):
         """ On destruction """
         self.sftp.close()

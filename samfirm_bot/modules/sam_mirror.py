@@ -25,6 +25,7 @@ async def mirror(event):
         return
     bot_reply = await event.reply("__Preparing...__")
     command = SAM_FIRM.download_update(model, region, version)
+    sf_path = None
     process = await create_subprocess_shell(command, stdin=PIPE, stdout=PIPE)
     while True:
         output = await process.stdout.readline()
@@ -61,8 +62,7 @@ async def mirror(event):
         await bot_reply.edit(f"**Downloaded {download} Successfully!**")
         SAM_FIRM.extract_files(download)
         await bot_reply.edit(f"**Extracted files, upload is going to start!**")
-        SF.sftp.makedirs(sf_path)
-        SF.sftp.put_r(download_folder, sf_path, preserve_mtime=True)
+        await SF.upload(sf_path, download_folder)
         await bot_reply.edit(f"**Uploaded Successfully!**")
         await event.reply(f"**Download from SourceForge**", buttons=[
             Button.url(version, f"{SF.url}/files/{model}/{region}/{version}")])
