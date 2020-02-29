@@ -1,4 +1,4 @@
-pysftp
+asyncssh
 requests
 humanize
 # Telethon Dependecies

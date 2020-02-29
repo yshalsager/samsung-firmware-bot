@@ -33,5 +33,6 @@ async def run():
     TG_LOGGER.info("Bot started as %s! Username is %s and ID is %s",
                    BOT_INFO['name'], BOT_INFO['username'], BOT_INFO['id'])
     load_modules(ALL_MODULES, __package__)
+    await SF.connect()
     async with BOT:
         await BOT.run_until_disconnected()

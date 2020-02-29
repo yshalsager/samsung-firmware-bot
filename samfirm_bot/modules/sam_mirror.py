@@ -39,7 +39,7 @@ async def mirror(event):
             if "Version:" in line:
                 version = re.search(r"(?:Version: )(.*)", line).group(1).split('/')[0]
                 sf_path = f"{SF.project}/{model}/{region}/{version}"
-                if SF.sftp.isdir(sf_path):
+                if await SF.sftp.isdir(sf_path):
                     await event.reply(f"**This firmware ({version}) is already mirrored!**", buttons=[
                         Button.url("Check here", f"{SF.url}/files/{model}/{region}/{version}")])
                     process.kill()
