@@ -1,5 +1,6 @@
 """ SamFirm Bot check updates module"""
-import subprocess
+from asyncio import create_subprocess_shell
+from asyncio.subprocess import PIPE
 
 from telethon import events
 
@@ -22,23 +23,22 @@ async def check(event):
         return
     command = SAM_FIRM.check_update(model, region, version)
     bot_reply = await event.reply("__Checking...__")
-    # process = subprocess.Popen(command,
-    #                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    with subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=1,
-                          universal_newlines=True, shell=True) as p:
-        output = p.stdout.read()
-        if output and "Could not fetch info" in output:
-            await bot_reply.edit("**Not Found!**")
-            return
-        if output and "Version" in output:
-            update = SAM_FIRM.parse_output(output)
-            TG_LOGGER.info(update)
-            message = f"**Model:** {update['model']}\n" \
-                      f"**System Version:** {update['system']}\n" \
-                      f"**Android Version:** {update['android']}\n" \
-                      f"**CSC Version:** {update['csc']}\n" \
-                      f"**Bootloader Version:** {update['bootloader']}\n" \
-                      f"**Release Date:** {update['date']}\n" \
-                      f"**Size:** {update['size']}"
-            await bot_reply.edit(message)
-            return
+    process = await create_subprocess_shell(command, stdin=PIPE, stdout=PIPE)
+    output = await process.stdout.read()
+    output = output.decode().strip()
+    await process.wait()
+    if output and "Could not fetch info" in output:
+        await bot_reply.edit("**Not Found!**")
+        return
+    if output and "Version" in output:
+        update = SAM_FIRM.parse_output(output)
+        TG_LOGGER.info(update)
+        message = f"**Model:** {update['model']}\n" \
+                  f"**System Version:** {update['system']}\n" \
+                  f"**Android Version:** {update['android']}\n" \
+                  f"**CSC Version:** {update['csc']}\n" \
+                  f"**Bootloader Version:** {update['bootloader']}\n" \
+                  f"**Release Date:** {update['date']}\n" \
+                  f"**Size:** {update['size']}"
+        await bot_reply.edit(message)
+        return

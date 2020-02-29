@@ -1,8 +1,7 @@
 """ SamFirm Bot mirror module"""
 import re
-import signal
-import subprocess
-from os import setsid, killpg, getpgid
+from asyncio import create_subprocess_shell
+from asyncio.subprocess import PIPE
 from shutil import rmtree
 
 from telethon import events, Button
@@ -26,32 +25,35 @@ async def mirror(event):
         return
     bot_reply = await event.reply("__Preparing...__")
     command = SAM_FIRM.download_update(model, region, version)
-    with subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=1,
-                          universal_newlines=True, shell=True, preexec_fn=setsid) as p:
-        for line in p.stdout:
-            if line == '\n':
-                continue
-            if line and "Could not" in line:
+    process = await create_subprocess_shell(command, stdin=PIPE, stdout=PIPE)
+    while True:
+        output = await process.stdout.readline()
+        if output:
+            line = output.decode("utf-8").strip()
+            if "Could not" in line:
                 await bot_reply.edit("**Not Found!**")
                 return
-            if line and "Checking" in line:
+            if "Checking" in line:
                 await bot_reply.edit("__Checking...__")
-            if line and "Version:" in line:
+            if "Version:" in line:
                 version = re.search(r"(?:Version: )(.*)", line).group(1).split('/')[0]
                 sf_path = f"{SF.project}/{model}/{region}/{version}"
                 if SF.sftp.isdir(sf_path):
                     await event.reply(f"**This firmware ({version}) is already mirrored!**", buttons=[
                         Button.url("Check here", f"{SF.url}/files/{model}/{region}/{version}")])
-                    killpg(getpgid(p.pid), signal.SIGTERM)
+                    process.kill()
                     return
                 else:
                     await bot_reply.edit(f"**Firmware {version} found, starting download!**")
-            if line and "Downloading" in line:
+            if "Downloading" in line:
                 await bot_reply.edit("__Downloading...__")
-            if line and "Decrypting" in line:
+            if "Decrypting" in line:
                 await bot_reply.edit("__Decrypting...__")
-            if line and "Finished" in line:
+            if "Finished" in line:
                 await bot_reply.edit("__Download Finished!...__")
+        else:
+            break
+    await process.wait()
     download = SAM_FIRM.get_downloaded(model, region)
     TG_LOGGER.info(f"Mirroring {download}")
     if download:
