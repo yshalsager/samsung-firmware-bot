@@ -58,7 +58,7 @@ async def mirror(event):
     download = SAM_FIRM.get_downloaded(model, region)
     TG_LOGGER.info(f"Mirroring {download}")
     if download:
-        download_folder = '/'.join(download.split('/')[:-1])
+        download_folder = '/'.join(download.split('/')[:-1]) + '/'
         await bot_reply.edit(f"**Downloaded {download} Successfully!**")
         SAM_FIRM.extract_files(download)
         await bot_reply.edit(f"**Extracted files, upload is going to start!**")

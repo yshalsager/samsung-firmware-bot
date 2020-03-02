@@ -21,6 +21,8 @@ async def get(event):
     if await SF.sftp.isdir(sf_path):
         message = f"**Available firmware for {model} ({region}):**\n\n"
         for item in await SF.sftp.listdir(sf_path):
+            if item.startswith('.'):
+                continue
             message += f"[{item}]({sf_folder}/{item})\n"
         await event.reply(message)
     else:
