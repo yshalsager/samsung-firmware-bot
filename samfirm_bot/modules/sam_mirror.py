@@ -8,7 +8,6 @@ from telethon import events, Button
 
 from samfirm_bot import TG_LOGGER, TG_BOT_ADMINS
 from samfirm_bot.samfirm_bot import BOT, SAM_FIRM, SF
-from samfirm_bot.utils.checker import is_device, is_region
 
 
 @BOT.on(events.NewMessage(from_users=TG_BOT_ADMINS, pattern=r'/samup(?: )(.*)(?: )([a-zA-Z0-9]{3})(?: )?(.*)?'))
@@ -20,9 +19,6 @@ async def mirror(event):
         version = None
     model = event.pattern_match.group(1).upper()
     region = event.pattern_match.group(2).upper()
-    if not await is_device(model) or not await is_region(region):
-        await event.reply("**Either model or region is incorrect!**")
-        return
     bot_reply = await event.reply("__Preparing...__")
     command = SAM_FIRM.download_update(model, region, version)
     sf_path = None

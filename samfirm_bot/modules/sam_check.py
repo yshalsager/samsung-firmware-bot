@@ -4,7 +4,7 @@ from asyncio.subprocess import PIPE
 
 from telethon import events
 
-from samfirm_bot import TG_LOGGER
+from samfirm_bot import TG_LOGGER, TG_BOT_ADMINS
 from samfirm_bot.samfirm_bot import BOT, SAM_FIRM
 from samfirm_bot.utils.checker import is_device, is_region
 
@@ -18,9 +18,10 @@ async def check(event):
         version = event.pattern_match.group(3).upper()
     except IndexError:
         version = None
-    if not await is_device(model) or not await is_region(region):
-        await event.reply("**Either model or region is incorrect!**")
-        return
+    if event.message.sender_id not in TG_BOT_ADMINS:
+        if not await is_device(model) or not await is_region(region):
+            await event.reply("**Either model or region is incorrect!**")
+            return
     command = SAM_FIRM.check_update(model, region, version)
     bot_reply = await event.reply("__Checking...__")
     process = await create_subprocess_shell(command, stdin=PIPE, stdout=PIPE)
