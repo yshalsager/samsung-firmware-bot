@@ -4,6 +4,7 @@ from telethon import events, Button
 from telethon.errors import MessageNotModifiedError
 from telethon.tl.types import PeerChannel
 
+from samfirm_bot import TG_BOT_ADMINS
 from samfirm_bot.samfirm_bot import BOT, SF
 from samfirm_bot.utils.checker import is_device, is_region
 
@@ -13,9 +14,10 @@ async def get(event):
     """ get Samsung firmware """
     model = event.pattern_match.group(1).upper()
     region = event.pattern_match.group(2).upper()
-    if not await is_device(model) or not await is_region(region):
-        await event.reply("**Either model or region is incorrect!**")
-        return
+    if event.message.sender_id not in TG_BOT_ADMINS:
+        if not await is_device(model) or not await is_region(region):
+            await event.reply("**Either model or region is incorrect!**")
+            return
     sf_path = f"{SF.project}/{model}/{region}/"
     sf_folder = f"{SF.url}/files/{model}/{region}"
     if await SF.check(sf_path):
