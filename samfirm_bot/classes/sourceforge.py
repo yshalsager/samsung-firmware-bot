@@ -42,6 +42,15 @@ class SourceForge:
         await self.makedirs(sf_path)
         await self.sftp.put(download_folder, sf_path, recurse=True, preserve=True)
 
+    async def check(self, sf_path):
+        """ Check if a directory exists"""
+        try:
+            exists = await self.sftp.isdir(sf_path)
+        except asyncssh.sftp.SFTPError:
+            await self.connect()
+            exists = await self.sftp.isdir(sf_path)
+        return exists
+
     def __del__(self):
         """ On destruction """
         self.sftp.close()

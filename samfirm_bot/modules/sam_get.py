@@ -18,7 +18,7 @@ async def get(event):
         return
     sf_path = f"{SF.project}/{model}/{region}/"
     sf_folder = f"{SF.url}/files/{model}/{region}"
-    if await SF.sftp.isdir(sf_path):
+    if await SF.check(sf_path):
         message = f"**Available firmware for {model} ({region}):**\n\n"
         for item in await SF.sftp.listdir(sf_path):
             if item.startswith('.'):

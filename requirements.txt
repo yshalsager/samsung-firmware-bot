@@ -2,7 +2,7 @@ asyncssh
 requests
 humanize
 # Telethon Dependecies
-Telethon==1.10.10
+Telethon==1.11.3
 cryptg
 pillow
 # aiohttp
