@@ -6,7 +6,7 @@ from shutil import rmtree
 
 from telethon import events, Button
 
-from samfirm_bot import TG_LOGGER, TG_BOT_ADMINS
+from samfirm_bot import TG_LOGGER, TG_BOT_ADMINS, TG_CHANNEL
 from samfirm_bot.samfirm_bot import BOT, SAM_FIRM, SF
 
 
@@ -60,7 +60,11 @@ async def mirror(event):
         await bot_reply.edit(f"**Extracted files, upload is going to start!**")
         await SF.upload(sf_path, download_folder)
         await bot_reply.edit(f"**Uploaded Successfully!**")
-        await event.reply(f"**Download from SourceForge**", buttons=[
-            Button.url(version, f"{SF.url}/files/{model}/{region}/{version}")])
+        buttons = [Button.url(version, f"{SF.url}/files/{model}/{region}/{version}")]
+        await event.reply(f"**Download from SourceForge**", buttons=buttons)
+        message = f"**New file uploaded!**\n\n" \
+                  f"**Model:** {model}\n" \
+                  f"**Region:** {region}\n"
+        await BOT.send_message(TG_CHANNEL, message, buttons=buttons)
         TG_LOGGER.info(f"Mirrored {SF.url}/files/{model}/{region}/{version}")
         rmtree(download_folder)

@@ -48,6 +48,9 @@ async def request(event):
               f"`/samup {model} {region}`"
     await BOT.send_message(entity, message)
     try:
-        await event.edit("**Your request has been submitted.**", buttons=Button.clear())
+        await event.edit(
+            "**Your request has been submitted.**\n"
+            "Join @samsungfws to get notified when your request is processed.",
+            buttons=Button.clear())
     except MessageNotModifiedError:
         pass

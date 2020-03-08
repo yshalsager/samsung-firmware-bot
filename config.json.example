@@ -4,7 +4,8 @@
   "api_key": 1111111,
   "api_hash": "",
   "tg_bot_admins": [],
-  "sf_project": "samsungfw",
+  "tg_channel": "@tg_channel",
+  "sf_project": "",
   "sf_user": "",
   "sf_pass": "",
   "sf_key": "/home/user/.ssh/private_key"

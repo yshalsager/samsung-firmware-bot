@@ -15,6 +15,7 @@ API_HASH = CONFIG['api_hash']
 BOT_TOKEN = CONFIG['tg_bot_token']
 BOT_ID = CONFIG['tg_bot_id']
 TG_BOT_ADMINS = CONFIG['tg_bot_admins']
+TG_CHANNEL = CONFIG['tg_channel']
 SF_PROJECT = CONFIG['sf_project']
 SF_USER = CONFIG['sf_user']
 SF_PASS = CONFIG['sf_pass']
@@ -34,6 +35,3 @@ LOGGER.addHandler(OUT)
 LOGGER.addHandler(ERR)
 LOGGER.setLevel(logging.INFO)
 TG_LOGGER = logging.getLogger(__name__)
-
-# other global variables
-TG_CHANNEL = "https://t.me/SamsungUpdatesTracker"
