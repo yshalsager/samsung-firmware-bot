@@ -9,7 +9,7 @@ from samfirm_bot.samfirm_bot import BOT, SF
 from samfirm_bot.utils.checker import is_device, is_region
 
 
-@BOT.on(events.NewMessage(pattern=r'/samget(?: )(.*)(?: )([a-zA-Z0-9]{3})'))
+@BOT.on(events.NewMessage(pattern=r'/samget(?:@\S+)?(?: )(.*)(?: )([a-zA-Z0-9]{3})'))
 async def get(event):
     """ get Samsung firmware """
     model = event.pattern_match.group(1).upper()

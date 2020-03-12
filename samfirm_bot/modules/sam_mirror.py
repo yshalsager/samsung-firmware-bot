@@ -10,7 +10,8 @@ from samfirm_bot import TG_LOGGER, TG_BOT_ADMINS, TG_CHANNEL
 from samfirm_bot.samfirm_bot import BOT, SAM_FIRM, SF
 
 
-@BOT.on(events.NewMessage(from_users=TG_BOT_ADMINS, pattern=r'/samup(?: )(.*)(?: )([a-zA-Z0-9]{3})(?: )?(.*)?'))
+@BOT.on(events.NewMessage(from_users=TG_BOT_ADMINS,
+                          pattern=r'/samup(?:@\S+)?(?: )(.*)(?: )([a-zA-Z0-9]{3})(?: )?(.*)?'))
 async def mirror(event):
     """ Mirror Samsung firmware """
     try:
