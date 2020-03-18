@@ -22,6 +22,7 @@ class SamFirm:
         self.loop = loop
         self.session = aiohttp.ClientSession()
         self.regions = self.load_regions()
+        self.devices = self.load_devices()
         self.models = []
         self.loop.create_task(self.models_loop())
         self.download_dir = f"{PARENT_DIR}/SamFirm/downloads"
@@ -46,6 +47,19 @@ class SamFirm:
         #         TG_LOGGER.warning("Couldn't fetch regions!")
         with open(f'{WORK_DIR}/data/regions.txt', 'r') as regions_file:
             return regions_file.read().splitlines()
+
+    @staticmethod
+    def load_devices():
+        """ load devices info """
+        with open(f'{WORK_DIR}/data/devices_info.json', 'r') as file:
+            return json.load(file)
+
+    def get_device_name(self, model):
+        """ Get device name of a model """
+        try:
+            return self.devices[model]
+        except KeyError:
+            return None
 
     async def load_models(self):
         """

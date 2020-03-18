@@ -5,7 +5,7 @@ from telethon.errors import MessageNotModifiedError
 from telethon.tl.types import PeerChannel
 
 from samfirm_bot import TG_BOT_ADMINS
-from samfirm_bot.samfirm_bot import BOT, SF
+from samfirm_bot.samfirm_bot import BOT, SF, SAM_FIRM
 from samfirm_bot.utils.checker import is_device, is_region
 
 
@@ -28,11 +28,12 @@ async def get(event):
             message += f"[{item}]({sf_folder}/{item})\n"
         await event.reply(message)
     else:
-        await event.reply(f"**There is no available firmware for {model} ({region}) yet\n"
-                          f"However, you can submit a request using the button below**",
-                          buttons=[
-                              Button.inline("Request Firmware", data=f"request_{model}_{region}")
-                          ])
+        await event.reply(
+            f"**There is no available firmware for {SAM_FIRM.get_device_name(model)} [{model}] ({region}) yet\n"
+            f"However, you can submit a request using the button below**",
+            buttons=[
+                Button.inline("Request Firmware", data=f"request_{model}_{region}")
+            ])
 
 
 @BOT.on(events.CallbackQuery(data=lambda d: d.startswith(b'request')))
@@ -43,7 +44,8 @@ async def request(event):
     region = params.split('_')[2]
     entity = await BOT.get_entity(PeerChannel(1348663969))
     message = f"**New Firmware request**!\n\n" \
-              f"**Device: {model}\n" \
+              f"**Device**: {SAM_FIRM.get_device_name(model)}\n" \
+              f"**Model: {model}\n" \
               f"**Region: {region}\n\n" \
               f"`/samup {model} {region}`"
     await BOT.send_message(entity, message)

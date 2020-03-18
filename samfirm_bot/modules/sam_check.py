@@ -34,7 +34,8 @@ async def check(event):
     if output and "Version" in output:
         update = SAM_FIRM.parse_output(output)
         TG_LOGGER.info(update)
-        message = f"**Model:** {update['model']}\n" \
+        message = f"**Device**: {SAM_FIRM.get_device_name(update['model'])}\n" \
+                  f"**Model:** {update['model']}\n" \
                   f"**System Version:** {update['system']}\n" \
                   f"**Android Version:** {update['android']}\n" \
                   f"**CSC Version:** {update['csc']}\n" \
