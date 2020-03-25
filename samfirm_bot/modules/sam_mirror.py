@@ -64,6 +64,7 @@ async def mirror(event):
         buttons = [Button.url(version, f"{SF.url}/files/{model}/{region}/{version}")]
         await event.reply(f"**Download from SourceForge**", buttons=buttons)
         message = f"**New file uploaded!**\n\n" \
+                  f"**Device**: {SAM_FIRM.get_device_name(model)}\n" \
                   f"**Model:** {model}\n" \
                   f"**Region:** {region}\n"
         await BOT.send_message(TG_CHANNEL, message, buttons=buttons)
