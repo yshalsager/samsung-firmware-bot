@@ -5,7 +5,7 @@ from telethon.errors import MessageNotModifiedError
 from telethon.tl.types import PeerChannel
 
 from samfirm_bot import TG_BOT_ADMINS
-from samfirm_bot.samfirm_bot import BOT, SFTP, SAM_FIRM
+from samfirm_bot.samfirm_bot import BOT, STORAGE, SAM_FIRM
 from samfirm_bot.utils.checker import is_device, is_region
 
 
@@ -18,14 +18,11 @@ async def get(event):
         if not await is_device(model) or not await is_region(region):
             await event.reply("**Either model or region is incorrect!**")
             return
-    sftp_path = f"{SFTP.project}/{model}/{region}/"
-    sftp_folder = f"{SFTP.url}/{model}/{region}"
-    if await SFTP.check(sftp_path):
+    path = f"{model}/{region}/"
+    if await STORAGE.check(path):
         message = f"**Available firmware for {model} ({region}):**\n\n"
-        for item in await SFTP.sftp.listdir(sftp_path):
-            if item.startswith('.'):
-                continue
-            message += f"[{item}]({sftp_folder}/{item})\n"
+        for item in await STORAGE.listdir(path):
+            message += f"[{item.parts[-1]}]({await STORAGE.get_url(item)})\n"
         await event.reply(message, link_preview=False)
     else:
         await event.reply(

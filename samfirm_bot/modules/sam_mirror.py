@@ -2,12 +2,11 @@
 import re
 from asyncio import create_subprocess_shell
 from asyncio.subprocess import PIPE
-from shutil import rmtree
 
 from telethon import events, Button
 
 from samfirm_bot import TG_LOGGER, TG_BOT_ADMINS, TG_CHANNEL
-from samfirm_bot.samfirm_bot import BOT, SAM_FIRM, SFTP
+from samfirm_bot.samfirm_bot import BOT, SAM_FIRM, STORAGE
 
 
 @BOT.on(events.NewMessage(from_users=TG_BOT_ADMINS,
@@ -22,8 +21,8 @@ async def mirror(event):
     region = event.pattern_match.group(2).upper()
     bot_reply = await event.reply("__Preparing...__")
     command = SAM_FIRM.download_update(model, region, version)
-    sftp_path = None
     process = await create_subprocess_shell(command, stdin=PIPE, stdout=PIPE)
+    path = None
     while True:
         output = await process.stdout.readline()
         if output:
@@ -35,10 +34,10 @@ async def mirror(event):
                 await bot_reply.edit("__Checking...__")
             if "Version:" in line:
                 version = re.search(r"(?:Version: )(.*)", line).group(1).split('/')[0]
-                sftp_path = f"{SFTP.project}/{model}/{region}/{version}"
-                if await SFTP.check(sftp_path):
+                path = f"{model}/{region}/{version}"
+                if await STORAGE.check(path):
                     await event.reply(f"**This firmware ({version}) is already mirrored!**", buttons=[
-                        Button.url("Check here", f"{SFTP.url}/{model}/{region}/{version}")])
+                        Button.url("Check here", await STORAGE.get_url(f"{model}/{region}/{version}"))])
                     process.kill()
                     return
                 else:
@@ -59,14 +58,13 @@ async def mirror(event):
         await bot_reply.edit(f"**Downloaded {download} Successfully!**")
         SAM_FIRM.extract_files(download)
         await bot_reply.edit(f"**Extracted files, upload is going to start!**")
-        await SFTP.upload(sftp_path, download_folder)
+        uploaded = await STORAGE.move(download_folder, path)
         await bot_reply.edit(f"**Uploaded Successfully!**")
-        buttons = [Button.url(version, f"{SFTP.url}/{model}/{region}/{version}")]
-        await event.reply(f"**Download from OSDN**", buttons=buttons, link_preview=False)
+        buttons = [Button.url(version, uploaded)]
+        await event.reply(f"**Download Here**", buttons=buttons, link_preview=False)
         message = f"**New file uploaded!**\n\n" \
                   f"**Device**: {SAM_FIRM.get_device_name(model)}\n" \
                   f"**Model:** {model}\n" \
                   f"**Region:** {region}\n"
         await BOT.send_message(TG_CHANNEL, message, buttons=buttons, link_preview=False)
-        TG_LOGGER.info(f"Mirrored {SFTP.url}/{model}/{region}/{version}")
-        rmtree(download_folder)
+        TG_LOGGER.info(f"Mirrored: {uploaded}")

@@ -16,10 +16,12 @@ BOT_TOKEN = CONFIG['tg_bot_token']
 BOT_ID = CONFIG['tg_bot_id']
 TG_BOT_ADMINS = CONFIG['tg_bot_admins']
 TG_CHANNEL = CONFIG['tg_channel']
-PROJECT = CONFIG['sf_project']
-SFTP_USER = CONFIG['sf_user']
-SFTP_PASS = CONFIG['sf_pass']
-SFTP_KEY = CONFIG['sf_key']
+# PROJECT = CONFIG['sf_project']
+# SFTP_USER = CONFIG['sf_user']
+# SFTP_PASS = CONFIG['sf_pass']
+# SFTP_KEY = CONFIG['sf_key']
+LOCAL_STORAGE = CONFIG['local_storage_path']
+WEB_STORAGE = CONFIG['web_storage']
 
 # set logging
 FORMATTER = logging.Formatter('%(asctime)s [%(levelname)s] %(name)s'
