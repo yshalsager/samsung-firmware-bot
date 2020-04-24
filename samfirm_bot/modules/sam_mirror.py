@@ -21,6 +21,8 @@ async def mirror(event):
     region = event.pattern_match.group(2).upper()
     bot_reply = await event.reply("__Preparing...__")
     command = SAM_FIRM.download_update(model, region, version)
+    if not await STORAGE.has_space():
+        await STORAGE.cleanup()
     process = await create_subprocess_shell(command, stdin=PIPE, stdout=PIPE)
     path = None
     while True:

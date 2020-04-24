@@ -1,23 +1,21 @@
 """ SamFirm Bot local storage class"""
 import shutil
+from datetime import datetime
 from os import path, mkdir
 from pathlib import Path
-
-from samfirm_bot import WEB_STORAGE, LOCAL_STORAGE
 
 
 class LocalClient:
     """ Local Storage management class """
 
     def __init__(self, local_storage_path, web_storage):
+        self.path = local_storage_path
         self.root = Path(local_storage_path)
         self.website = web_storage
 
     async def move(self, _source, _dest):
         """Move path to web storage"""
         dest = self.root / _dest
-        print(f"source: {_source}")
-        print(f"dest: {dest}")
         try:
             shutil.move(_source, dest)
         except FileNotFoundError as err:
@@ -49,4 +47,37 @@ class LocalClient:
 
     async def get_url(self, _path):
         """Get download URL of a path"""
-        return str(_path).replace(LOCAL_STORAGE, WEB_STORAGE)
+        return str(_path).replace(self.path, self.website)
+
+    async def get_free_space(self):
+        """Get free disk space percentage"""
+        disk_usage = shutil.disk_usage(self.root)
+        # human_disk_usage = {
+        #     'free': naturalsize(disk_usage.free),
+        #     'used': naturalsize(disk_usage.used),
+        #     'total': naturalsize(disk_usage.total)
+        # }
+        # print(human_disk_usage)
+        percent = (disk_usage.used / disk_usage.total) * 100.0
+        return percent
+
+    async def has_space(self):
+        """Return true if the disk space is more than 20% free"""
+        free_space_percent = await self.get_free_space()
+        return bool(free_space_percent > 20)
+
+    async def list_dirs(self):
+        """Return a directory of directories sorted by creation time"""
+        dirs = {datetime.fromtimestamp(item.stat().st_ctime): item
+                for item in self.root.iterdir()
+                if item.is_dir()}
+        sorted_dirs = {k: v for k, v in sorted(dirs.items(), key=lambda item: item[0])}
+        return sorted_dirs
+
+    async def cleanup(self):
+        """Clean up storage directory until disk available space is more than 75"""
+        dirs = await self.list_dirs()
+        for directory in dirs.values():
+            if await self.get_free_space() < 75:
+                print(f"Deleting: {directory}")
+                shutil.rmtree(directory)
