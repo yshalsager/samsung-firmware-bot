@@ -1,6 +1,8 @@
 #!/usr/bin/env python3.7
 """ SamFirm Telegram Bot"""
 import asyncio
+import pickle
+from os import path, remove
 
 from telethon.sync import TelegramClient
 
@@ -33,5 +35,11 @@ async def run():
     TG_LOGGER.info(f"Storage location: {LOCAL_STORAGE} - Website URL:{WEB_STORAGE}")
     TG_LOGGER.info(f"Work directory: {WORK_DIR} - Parent directory: {PARENT_DIR}")
     load_modules(ALL_MODULES, __package__)
+    # Check if the bot is restarting
+    if path.exists('restart.pickle'):
+        with open('restart.pickle', 'rb') as status:
+            restart_message = pickle.load(status)
+        await BOT.edit_message(restart_message['chat'], restart_message['message'], 'Restarted Successfully!')
+        remove('restart.pickle')
     async with BOT:
         await BOT.run_until_disconnected()
