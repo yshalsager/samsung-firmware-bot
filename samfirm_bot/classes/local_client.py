@@ -58,7 +58,7 @@ class LocalClient:
         #     'total': naturalsize(disk_usage.total)
         # }
         # print(human_disk_usage)
-        percent = (disk_usage.used / disk_usage.total) * 100.0
+        percent = (disk_usage.free / disk_usage.total) * 100.0
         return percent
 
     async def has_space(self):
